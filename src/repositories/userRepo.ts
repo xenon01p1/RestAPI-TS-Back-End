@@ -9,7 +9,7 @@ const ALLOWED_COLUMNS = [
   "refresh_token"
 ];
 
-const findUser = async (filters: FilterUser): Promise<User[]> => {
+export const findUser = async (filters: FilterUser): Promise<User | null> => {
     const keys = Object.keys(filters).filter(
         (key): key is keyof User => ALLOWED_COLUMNS.includes(key)
     );
@@ -29,5 +29,5 @@ const findUser = async (filters: FilterUser): Promise<User[]> => {
         values
     );
 
-    return rows as User[];
+    return rows.length ? (rows[0] as User) : null;
 }
