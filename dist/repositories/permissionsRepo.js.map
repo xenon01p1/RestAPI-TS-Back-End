@@ -1,0 +1,1 @@
+{"version":3,"file":"permissionsRepo.js","sourceRoot":"","sources":["../../src/repositories/permissionsRepo.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,kBAAkB,CAAC;AAIlC,MAAM,CAAC,MAAM,uBAAuB,GAAG,KAAK,EAAE,MAAc,EAA6B,EAAE;IACvF,MAAM,CAAC,IAAI,CAAC,GAAG,MAAM,EAAE,CAAC,KAAK,CACzB;;;;;;SAMC,EACD,CAAC,MAAM,CAAC,CACX,CAAC;IAEF,OAAO,IAAwB,CAAC;AACpC,CAAC,CAAA"}
