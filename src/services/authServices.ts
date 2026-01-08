@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import type { Tokens } from "../types/authTypes.js";
 import { createAccessToken, createRefreshToken } from "../utils/jwtUtils.js";
-import { findUser } from "../repositories/userRepo.js";
+import { findUser, insertUser } from "../repositories/userRepo.js";
 import { findPermissionsByUserId } from "../repositories/permissionsRepo.js";
 
 export class AuthError extends Error {
@@ -30,6 +30,11 @@ export const loginService = async (
   const refreshToken = createRefreshToken(user.id);
 
   return { accessToken, refreshToken };
+};
+
+export const registerService = async (username: string, password: string): Promise<void> => {
+  const hashedPass = await bcrypt.hash(password, 12);
+  await insertUser(username, hashedPass);
 };
 
 

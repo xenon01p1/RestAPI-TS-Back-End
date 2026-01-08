@@ -17,4 +17,8 @@ export const findUser = async (filters) => {
     const [rows] = await db.query(`SELECT * FROM users WHERE ${whereClause}`, values);
     return rows.length ? rows[0] : null;
 };
+export const insertUser = async (username, password) => {
+    const [result] = await db.query(`INSERT INTO users (username, password) VALUES (?, ?)`, [username, password]);
+    return result.insertId;
+};
 //# sourceMappingURL=userRepo.js.map

@@ -1,6 +1,7 @@
 import db from "../connection.js";
 import type { RowDataPacket } from "mysql2";
 import type { User, FilterUser } from "../types/userTypes.js";
+import type { CreateUser } from "../types/userTypes.js";
 
 const ALLOWED_COLUMNS = [
   "id",
@@ -31,3 +32,15 @@ export const findUser = async (filters: FilterUser): Promise<User | null> => {
 
     return rows.length ? (rows[0] as User) : null;
 }
+
+export const insertUser = async (
+  username: string,
+  password: string
+): Promise<number> => {
+  const [result] = await db.query<any>(
+    `INSERT INTO users (username, password) VALUES (?, ?)`,
+    [username, password]
+  );
+
+  return result.insertId;
+};

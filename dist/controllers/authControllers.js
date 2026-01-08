@@ -1,6 +1,5 @@
-import db from "../connection.js";
 import { authSchema } from "../schemas/authSchemas.js";
-import { loginService, AuthError } from "../services/authServices.js";
+import { loginService, AuthError, registerService } from "../services/authServices.js";
 const loginController = async (req, res) => {
     // 1️⃣ runtime validation
     const parsed = authSchema.safeParse(req.body);
@@ -34,14 +33,34 @@ const loginController = async (req, res) => {
         });
     }
 };
-export { loginController };
-// const registerController = async (req, res) => {
-// }
+const registerController = async (req, res) => {
+    const parsed = authSchema.safeParse(req.body);
+    if (!parsed.success) {
+        return res.status(400).json({
+            status: "failed",
+            message: "Invalid request body"
+        });
+    }
+    const { username, password } = parsed.data;
+    try {
+        await registerService(username, password);
+        return res.status(201).json({
+            status: "success",
+            message: "Register successful"
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            status: "failed",
+            message: "Internal server error"
+        });
+    }
+};
 // const refreshTokenController = async (req, res) => {
 // }
 export default {
     loginController,
-    // registerController,
+    registerController,
     // refreshTokenController
 };
 //# sourceMappingURL=authControllers.js.map

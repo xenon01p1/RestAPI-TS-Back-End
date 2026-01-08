@@ -1,12 +1,7 @@
-import db from "../connection.js";
 import type { Request, Response } from "express";
-import type { Auth } from "../schemas/authSchemas.js";
+import type { Auth, LoginResponse, RegisterResponse } from "../schemas/authSchemas.js";
 import { authSchema } from "../schemas/authSchemas.js";
-import { loginService, AuthError } from "../services/authServices.js";
-
-type LoginResponse =
-  | { status: "success"; data: { accessToken: string; refreshToken: string } }
-  | { status: "failed"; message: string };
+import { loginService, AuthError, registerService } from "../services/authServices.js";
 
 const loginController = async (
   req: Request<{}, LoginResponse, Auth>,
@@ -51,12 +46,36 @@ const loginController = async (
   }
 };
 
-export { loginController };
+const registerController = async (
+  req: Request<{}, RegisterResponse, Auth>, 
+  res: Response<RegisterResponse>
+) => {
 
+  const parsed = authSchema.safeParse(req.body);
+  if(!parsed.success) {
+    return res.status(400).json({
+      status: "failed",
+      message: "Invalid request body"
+    })
+  }
 
-// const registerController = async (req, res) => {
+  const { username, password } = parsed.data;
 
-// }
+  try {
+    await registerService(username, password);
+
+    return res.status(201).json({
+      status: "success",
+      message: "Register successful"
+    })
+
+  } catch (error) {
+    return res.status(500).json({
+      status: "failed",
+      message: "Internal server error"
+    })
+  }
+}
 
 // const refreshTokenController = async (req, res) => {
 
@@ -64,6 +83,6 @@ export { loginController };
 
 export default {
     loginController,
-    // registerController,
+    registerController,
     // refreshTokenController
 }

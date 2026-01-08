@@ -16,3 +16,4 @@ export const findPermissionsByUserId = async (userId: number): Promise<GetPermis
 
     return rows as GetPermissions[];
 }
+
