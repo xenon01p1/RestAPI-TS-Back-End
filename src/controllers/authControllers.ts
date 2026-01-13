@@ -77,12 +77,15 @@ const registerController = async (
   }
 }
 
-// const refreshTokenController = async (req, res) => {
+// const refreshTokenController = async (
+//   req = Request<{}, RegisterResponse, Auth>, 
+//   res = Response<RegisterResponse>
+// ) => {
 
 // }
 
 export default {
-    loginController,
-    registerController,
-    // refreshTokenController
+  loginController,
+  registerController,
+  // refreshTokenController
 }
