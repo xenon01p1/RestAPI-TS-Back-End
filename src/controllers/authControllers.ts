@@ -1,7 +1,8 @@
 import type { Request, Response } from "express";
-import type { Auth, LoginResponse, RegisterResponse } from "../schemas/authSchemas.js";
-import { authSchema } from "../schemas/authSchemas.js";
-import { loginService, AuthError, registerService } from "../services/authServices.js";
+import type { Auth, LoginResponse, RegisterResponse, refreshTokenResponse, refreshTokenRequest } from "../schemas/authSchemas.js";
+import { authSchema, refreshTokenReqSchema  } from "../schemas/authSchemas.js";
+import { loginService, AuthError, registerService, refreshTokenService } from "../services/authServices.js";
+import { validateRefreshToken } from "../utils/jwtUtils.js";
 
 const loginController = async (
   req: Request<{}, LoginResponse, Auth>,
@@ -77,15 +78,53 @@ const registerController = async (
   }
 }
 
-// const refreshTokenController = async (
-//   req = Request<{}, RegisterResponse, Auth>, 
-//   res = Response<RegisterResponse>
-// ) => {
+const refreshTokenController = async (
+  req: Request<{}, refreshTokenResponse, refreshTokenRequest>, 
+  res: Response<refreshTokenResponse>
+) => {
 
-// }
+  const parsed = refreshTokenReqSchema.safeParse(req.body);
+  if(!parsed.success) {
+    return res.status(400).json({
+      status: "failed",
+      message: "Invalid request body"
+    })
+  }
+
+  try {
+    let payload = validateRefreshToken(parsed.data.refreshToken);
+  } catch (error) {
+    return res.status(403).json({
+      status: "failed",
+      message: "Invalid refresh token"
+    });
+  }
+
+  try {
+    const newToken = await refreshTokenService(
+      parsed.data.id,
+      parsed.data.refreshToken
+    );
+
+    return res.status(201).json({
+      status: "success",
+      ...newToken
+    })
+  } catch (err) {
+    const message =
+      err instanceof Error ? err.message : "Internal server error";
+
+    return res.status(500).json({
+      status: "failed",
+      message
+    });
+  }
+
+
+}
 
 export default {
   loginController,
   registerController,
-  // refreshTokenController
+  refreshTokenController
 }

@@ -6,5 +6,5 @@ export type User = {
 };
 
 export type CreateUser = Omit<User, "id" | "refreshToken">;
-export type UpdateUser = Omit<User, "refreshToken">;
+export type UpdateUser = Partial<Omit<User, "id">>;
 export type FilterUser = Partial<User>;

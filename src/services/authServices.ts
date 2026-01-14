@@ -1,13 +1,22 @@
 import bcrypt from "bcrypt";
 import type { Tokens } from "../types/authTypes.js";
 import { createAccessToken, createRefreshToken } from "../utils/jwtUtils.js";
-import { findUser, insertUser } from "../repositories/userRepo.js";
+import { findUser, insertUser, updateUser } from "../repositories/userRepo.js";
 import { findPermissionsByUserId } from "../repositories/permissionsRepo.js";
+import { permission } from "node:process";
+import { create } from "node:domain";
 
 export class AuthError extends Error {
   constructor(message = "INVALID_CREDENTIALS") {
     super(message);
     this.name = "AuthError";
+  }
+}
+
+export class UserError extends Error {
+  constructor(message = "INVALID_USER") {
+    super(message);
+    this.name = "UserError";
   }
 }
 
@@ -36,5 +45,21 @@ export const registerService = async (username: string, password: string): Promi
   const hashedPass = await bcrypt.hash(password, 12);
   await insertUser(username, hashedPass);
 };
+
+export const refreshTokenService = async (id: number, refreshToken: string): Promise<Tokens> => {
+  const user = await findUser({ refreshToken });
+  if (!user) throw new UserError();
+
+  const permissions = await findPermissionsByUserId(id);
+  const createNewAccessToken = createAccessToken(id, permissions);
+  const createNewRefreshToken = createRefreshToken(id);
+
+  await updateUser ({refreshToken}, {id});
+
+  return {
+    accessToken: createNewAccessToken,
+    refreshToken: createNewRefreshToken
+  }
+}
 
 
