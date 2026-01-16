@@ -1,5 +1,6 @@
-import { getGamesRepo, newGameRepo } from "../repositories/gamesRepo.js";
+import { getGamesRepo, newGameRepo, patchGameRepo } from "../repositories/gamesRepo.js";
 import type { Game } from "../schemas/gamesSchemas.js";
+import type { PatchGameInput } from "../types/gameTypes.js";
 
 export const getGamesService = async (): Promise<Game[]> => {
     const games = await getGamesRepo();
@@ -16,3 +17,14 @@ export const newGamesService = async (
 
     return result.insertId;
 }
+
+export const patchGameService = async (
+  id: number,
+  data: PatchGameInput
+): Promise<void> => {
+  const result = await patchGameRepo(id, data);
+
+  if (result.affectedRows === 0) {
+    throw new Error("Game not found");
+  }
+};

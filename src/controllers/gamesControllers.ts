@@ -1,5 +1,5 @@
 import type { Response, Request } from "express";
-import { getGamesService, newGamesService } from "../services/gamesService.js";
+import { getGamesService, newGamesService, patchGameService } from "../services/gamesService.js";
 import type { GamesResponse, Game, GameForm } from "../schemas/gamesSchemas.js";
 import { gameFormSchema } from "../schemas/gamesSchemas.js";
 
@@ -63,12 +63,42 @@ const newGames = async (
     }
 };
 
-// const patchGames = async (
-//     req: Request,
-//     res: Response
-// ) => {
+const patchGames = async (
+    req: Request<{id: number}, GamesResponse, GameForm>,
+    res: Response<GamesResponse>
+): Promise<void> => {
+    const parsed = gameFormSchema.safeParse(req.body);
+    if (!parsed.success)  {
+        res.status(400).json({
+            status: "failed",
+            message: "Invalid request"
+        })
+        return;
+    }
 
-// };
+    const id = Number(req.params.id);
+    const { title, genre, rating } = parsed.data;
+
+    try {
+        const newGame = await patchGameService(id, {title, genre, rating});
+
+        res.status(400).json({
+            status: "success",
+            message: "Successfully added new game",
+            data: {
+                gameId: newGame
+            }
+        })
+    } catch (err) {
+        const message =
+            err instanceof Error ? err.message : "Internal server error";
+
+        res.status(500).json({
+            status: "failed",
+            message,
+        });
+    }
+};
 
 // const deleteGames = async (
 //     req: Request,
@@ -80,6 +110,6 @@ const newGames = async (
 export default {
     getGames,
     newGames,
-    // patchGames,
+    patchGames,
     // deleteGames
 };
