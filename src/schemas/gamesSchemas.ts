@@ -11,11 +11,11 @@ export const gameFormSchema = gameSchema.omit({
   id: true,
 });
 
-export const getGamesResponseSchema = z.discriminatedUnion("status", [
+export const gamesResponseSchema = z.discriminatedUnion("status", [
   z.object({
     status: z.literal("success"),
     message: z.string(),
-    data: z.array(gameSchema),
+    data: z.any(),
   }),
   z.object({
     status: z.literal("failed"),
@@ -25,4 +25,4 @@ export const getGamesResponseSchema = z.discriminatedUnion("status", [
 
 export type Game = z.infer<typeof gameSchema>;
 export type GameForm = z.infer<typeof gameFormSchema>;
-export type GetGamesResponse = z.infer<typeof getGamesResponseSchema>;
+export type GamesResponse = z.infer<typeof gamesResponseSchema>;
