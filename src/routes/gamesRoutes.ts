@@ -6,7 +6,7 @@ const gameRoutes = express.Router();
 
 gameRoutes.get('/games', checkAuthMiddleware, gameControllers.getGames);
 gameRoutes.post('/games', checkAuthMiddleware, gameControllers.newGames);
-// gameRoutes.patch('/games', checkAuthMiddleware, gameControllers.patchGames);
-// gameRoutes.delete('/games', checkAuthMiddleware, gameControllers.deleteGames);
+gameRoutes.patch('/games/id', checkAuthMiddleware, gameControllers.patchGames);
+gameRoutes.delete('/games/id', checkAuthMiddleware, gameControllers.deleteGames);
 
 export default gameRoutes;

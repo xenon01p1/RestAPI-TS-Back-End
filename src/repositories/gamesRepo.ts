@@ -59,3 +59,12 @@ export const patchGameRepo = async (
   return result;
 };
 
+export const deleteGameRepo = async (id: number) => {
+  const [result] = await db.query<ResultSetHeader>(
+    `DELETE FROM games WHERE id = ?`, 
+    [id]
+  );
+
+  return result;
+}
+

@@ -1,4 +1,4 @@
-import { getGamesRepo, newGameRepo, patchGameRepo } from "../repositories/gamesRepo.js";
+import { getGamesRepo, newGameRepo, patchGameRepo, deleteGameRepo } from "../repositories/gamesRepo.js";
 import type { Game } from "../schemas/gamesSchemas.js";
 import type { PatchGameInput } from "../types/gameTypes.js";
 
@@ -23,6 +23,14 @@ export const patchGameService = async (
   data: PatchGameInput
 ): Promise<void> => {
   const result = await patchGameRepo(id, data);
+
+  if (result.affectedRows === 0) {
+    throw new Error("Game not found");
+  }
+};
+
+export const deleteGameService = async (id: number): Promise<void> => {
+  const result = await deleteGameRepo(id);
 
   if (result.affectedRows === 0) {
     throw new Error("Game not found");
